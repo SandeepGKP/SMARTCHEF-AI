@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import LandingPage from './pages/LandingPage';
 import Register from './pages/Register';
 import Login from './pages/Login';
-import Home from './pages/home'; // your app's actual dashboard
+import Home from './pages/Homep'; // your app's actual dashboard
 
 const App = () => {
   const token = localStorage.getItem('token');

@@ -11,7 +11,7 @@ const RecipeDetail = ({ recipe, onBack }) => {
 
   useEffect(() => {
     if (recipe?.id) {
-      fetch(`http://localhost:5000/api/recipes/instructions/${recipe.id}`)
+      fetch(`https://smartchef-ai-backend.onrender.com/api/recipes/instructions/${recipe.id}`)
         .then((res) => res.json())
         .then((data) => setInstructions(data.instructions))
         .catch((err) => {
@@ -118,7 +118,7 @@ const Home = () => {
 
   const handleSearch = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/recipes/ai', {
+      const res = await fetch('https://smartchef-ai-backend.onrender.com/api/recipes/ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ingredients }),

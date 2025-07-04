@@ -9,7 +9,7 @@ const Planner = () => {
     setLoading(true);
     setPlan(null);
     try {
-      const res = await axios.get('http://localhost:5000/api/recipes/plan');
+      const res = await axios.get('https://smartchef-ai-backend.onrender.com/api/recipes/plan');
       setPlan(res.data.plan);
     } catch (error) {
       console.error(error);

@@ -24,7 +24,7 @@ const RecipeDetail = () => {
 
       if (found) {
         axios
-          .get(`http://localhost:5000/api/recipes/instructions/${id}`)
+          .get(`https://smartchef-ai-backend.onrender.com/api/recipes/instructions/${id}`)
           .then((res) => {
             setInstructions(res.data.instructions || 'No instructions available for this recipe.');
           })
@@ -38,7 +38,7 @@ const RecipeDetail = () => {
 
   const handleSearch = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/recipes/ai', {
+      const res = await fetch('https://smartchef-ai-backend.onrender.com/api/recipes/ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ingredients }),

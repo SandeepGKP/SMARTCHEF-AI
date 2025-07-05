@@ -40,7 +40,7 @@ const Planner = () => {
               <ul className="list-disc list-inside mt-2 space-y-1">
                 {meals.meals.map((meal) => (
                   <li key={meal.id}>
-                    🍽️ {meal.title} – <a
+                    🍽️ {meal.title} <a
                       href={meal.sourceUrl}
                       target="_blank"
                       rel="noopener noreferrer"

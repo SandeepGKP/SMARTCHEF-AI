@@ -3,6 +3,7 @@ import { FaUtensils, FaCalendarAlt, FaVolumeUp, FaUser, FaMoon, FaSun } from 're
 import Profile from './Profile';
 import Planner from './Planner';
 
+
 const RecipeDetail = ({ recipe, onBack }) => {
   const [instructions, setInstructions] = useState('');
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -126,10 +127,14 @@ const Home = () => {
       const data = await res.json();
       setRecipes(data.recipes || []);
       localStorage.setItem('recipes', JSON.stringify(data.recipes));
+
+      // ✅ Add this line to switch to the recipes section
+      setActiveSection('recipes');
     } catch (err) {
       console.error('❌ Error fetching recipes:', err);
     }
   };
+
 
   const cards = [
     {

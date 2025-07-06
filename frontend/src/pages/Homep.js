@@ -83,7 +83,7 @@ const Home = () => {
       localStorage.setItem('theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+      localStorage.setItem('theme', 'dark');
     }
   }, [darkMode]);
 
@@ -214,7 +214,7 @@ const Home = () => {
               placeholder="Recognized ingredients will appear here"
               value={ingredients}
               onChange={(e) => setIngredients(e.target.value)}
-              className="border border-gray-300 px-3 py-2 rounded w-full max-w-md"
+              className="border border-gray-300 px-3 py-2 rounded w-full max-w-md text-black"
             />
             <button
               onClick={handleSearch}

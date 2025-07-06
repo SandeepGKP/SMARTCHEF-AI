@@ -36,8 +36,8 @@ const Planner = () => {
         <div className="mt-6 space-y-4">
           {Object.entries(plan.week).map(([day, meals]) => (
             <div key={day} className="bg-white p-4 rounded shadow">
-              <h3 className="text-xl font-semibold text-green-700 capitalize">{day}</h3>
-              <ul className="list-disc list-inside mt-2 space-y-1">
+              <h3 className="text-xl font-semibold text-green-700 capitalize ">{day}</h3>
+              <ul className="list-disc list-inside mt-2 space-y-1 text-black">
                 {meals.meals.map((meal) => (
                   <li key={meal.id}>
                     🍽️ {meal.title} <a

@@ -13,12 +13,20 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    console.log('🔍 Attempting login with:', form);
     try {
       const res = await axios.post('https://smartchef-ai-backend.onrender.com/api/auth/login', form);
+      console.log('✅ Login response:', res.data);
+      console.log('✅ Token received:', res.data.token ? 'Yes' : 'No');
+      
       localStorage.setItem('token', res.data.token);
+      console.log('✅ Token saved to localStorage');
+      
       alert('Login successful!');
       navigate('/home');
     } catch (err) {
+      console.error('❌ Login error:', err);
+      console.error('❌ Error response:', err.response?.data);
       setError(err.response?.data?.error || 'Login failed');
     }
   };

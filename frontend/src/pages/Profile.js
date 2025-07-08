@@ -119,11 +119,11 @@ const Profile = () => {
     localStorage.removeItem('profilePhoto');
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('recipes');
-    window.location.href = '/';
-  };
+  // const handleLogout = () => {
+  //   localStorage.removeItem('token');
+  //   localStorage.removeItem('recipes');
+  //   window.location.href = '/';
+  // };
 
   const tabs = [
     { id: 'overview', name: 'Overview', icon: <FaUser /> },
@@ -170,13 +170,13 @@ const Profile = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Profile Dashboard</h1>
-            <button
+            {/* <button
               onClick={handleLogout}
               className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
             >
               <FaSignOutAlt />
               Logout
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

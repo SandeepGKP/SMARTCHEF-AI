@@ -54,7 +54,7 @@ const LandingPage = () => {
             </button>
           </Link>
           <Link to="/register">
-            <button className="bg-green-600 border border-green-600 text-white px-6 py-2 rounded hover:bg-green-100">
+            <button className="bg-green-600 border border-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
               Register
             </button>
           </Link>

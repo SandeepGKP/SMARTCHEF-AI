@@ -8,6 +8,7 @@ const Login = () => {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const [loggedIn, setLoggedIn] = useState(false);
 
   // Set dark mode as default
   useEffect(() => {
@@ -31,13 +32,19 @@ const Login = () => {
       console.log('✅ Token saved to localStorage');
       
       alert('Login successful!');
-      navigate('/home');
+      setLoggedIn(true);
     } catch (err) {
       console.error('❌ Login error:', err);
       console.error('❌ Error response:', err.response?.data);
       setError(err.response?.data?.error || 'Login failed');
     }
   };
+
+  useEffect(() => {
+    if (loggedIn) {
+      navigate('/home');
+    }
+  }, [loggedIn, navigate]);
 
   return (
     <>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import Footer from '../components/Footer';
 
 const features = [
   {
@@ -73,10 +74,10 @@ const LandingPage = () => {
         </div>
       </section>
 
+
       {/* Footer */}
-      <footer className="text-center py-6 text-sm text-gray-500 dark:text-gray-400 border-t mt-0">
-        © 2025 SmartChef AI — Crafted with ❤️ using MERN & SpoonacularAI
-      </footer>
+      <Footer />
+      <div id="about-us-section"></div>
     </div>
   );
 };

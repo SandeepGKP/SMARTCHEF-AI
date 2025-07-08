@@ -1,14 +1,20 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { FaUtensils, FaCalendarAlt, FaVolumeUp, FaUser, FaMoon, FaSun } from 'react-icons/fa';
+import { FaUtensils, FaCalendarAlt, FaVolumeUp, FaUser } from 'react-icons/fa';
 import Profile from './Profile';
 import Planner from './Planner';
+import Footer from '../components/Footer';
 
 
 const RecipeDetail = ({ recipe, onBack }) => {
   const [instructions, setInstructions] = useState('');
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [speakIndex, setSpeakIndex] = useState(0);
+  // const [speakStepIndex, setSpeakStepIndex] = useState(0);
+  const [steps, setSteps] = useState([]);
   const synth = window.speechSynthesis;
+  const [currentUtterance, setCurrentUtterance] = useState(null);
+  // const lastSpokenStepRef = useRef(0);
+  const [lastSpokenStep, setLastSpokenStep] = useState(0);
+  const [lastSpokenChar, setLastSpokenChar] = useState(0);
 
   useEffect(() => {
     if (recipe?.id) {
@@ -22,28 +28,79 @@ const RecipeDetail = ({ recipe, onBack }) => {
     }
   }, [recipe]);
 
-  const handleSpeak = () => {
-    if (synth.speaking) synth.cancel();
-
+  useEffect(() => {
     if (instructions) {
-      const textToSpeak = instructions.slice(speakIndex);
+      // Split instructions into steps by line breaks only
+      const stepArr = instructions.split(/\r?\n/).filter(s => s.trim().length > 0).map((step) => `Step : ${step.trim()}`);
+      setSteps(stepArr);
+    }
+  }, [instructions]);
+
+  const handleSpeak = () => {
+    if (synth.speaking && currentUtterance) synth.cancel();
+    if (steps.length > 0) {
+      let textToSpeak;
+      if (lastSpokenChar > 0 && lastSpokenStep < steps.length) {
+        // Resume from the exact char in the step
+        const stepText = steps[lastSpokenStep];
+        textToSpeak = [
+          stepText.substring(lastSpokenChar),
+          ...steps.slice(lastSpokenStep + 1)
+        ].join('. ');
+      } else {
+        textToSpeak = steps.slice(lastSpokenStep).join('. ');
+      }
       const utterance = new window.SpeechSynthesisUtterance(textToSpeak);
+      utterance.rate = 0.5;
+      setCurrentUtterance(utterance);
       synth.speak(utterance);
       setIsSpeaking(true);
-
+      let localStep = lastSpokenStep;
+      let localChar = lastSpokenChar;
       utterance.onend = () => setIsSpeaking(false);
       utterance.onboundary = (event) => {
-        if (event.name === 'word') {
-          setSpeakIndex(speakIndex + event.charIndex);
+        if (event.name === 'word' && event.charIndex !== undefined) {
+          // Find which step and charIndex we are at
+          let total = 0;
+          let found = false;
+          for (let i = localStep; i < steps.length; i++) {
+            const step = (i === localStep && localChar > 0) ? steps[i].substring(localChar) : steps[i];
+            if (event.charIndex < total + step.length) {
+              setLastSpokenStep(i);
+              setLastSpokenChar(event.charIndex - total + (i === localStep ? localChar : 0));
+              found = true;
+              break;
+            }
+            total += step.length + 2; // +2 for '. '
+          }
+          if (!found) {
+            setLastSpokenStep(steps.length - 1);
+            setLastSpokenChar(0);
+          }
         }
       };
     }
   };
 
   const handleStop = () => {
-    if (synth.speaking) {
+    if (synth.speaking && currentUtterance) {
       synth.cancel();
       setIsSpeaking(false);
+    }
+  };
+
+  const handleRestart = () => {
+    setLastSpokenStep(0);
+    setLastSpokenChar(0);
+    if (synth.speaking && currentUtterance) synth.cancel();
+    if (steps.length > 0) {
+      const textToSpeak = steps.join('. ');
+      const utterance = new window.SpeechSynthesisUtterance(textToSpeak);
+      utterance.rate = 0.5;
+      setCurrentUtterance(utterance);
+      synth.speak(utterance);
+      setIsSpeaking(true);
+      utterance.onend = () => setIsSpeaking(false);
     }
   };
 
@@ -58,10 +115,11 @@ const RecipeDetail = ({ recipe, onBack }) => {
       <p className="mt-2 text-sm text-gray-500">Estimated Calories: {recipe.calories}</p>
       <div className="mt-6">
         <h2 className="text-xl font-semibold mb-2">Instructions:</h2>
-        <pre className="bg-gray-100 p-4 rounded whitespace-pre-wrap">{instructions}</pre>
+        <pre className="bg-gray-100 p-4 rounded whitespace-pre-wrap text-black">{instructions}</pre>
         <div className="mt-4 flex gap-2">
           <button onClick={handleSpeak} disabled={isSpeaking} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">🔊 Speak</button>
           <button onClick={handleStop} disabled={!isSpeaking} className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">✋ Stop</button>
+          <button onClick={handleRestart} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">⏮️ Restart</button>
         </div>
       </div>
     </div>
@@ -69,23 +127,12 @@ const RecipeDetail = ({ recipe, onBack }) => {
 };
 
 const Home = () => {
-  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
   const [activeSection, setActiveSection] = useState(null);
   const [ingredients, setIngredients] = useState('');
   const [recipes, setRecipes] = useState([]);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef(null);
-
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'dark');
-    }
-  }, [darkMode]);
 
   // Voice recognition setup
   const startListening = () => {
@@ -169,12 +216,6 @@ const Home = () => {
         <h1 className="text-2xl sm:text-3xl font-bold text-green-800 dark:text-green-300 text-center">
           Welcome to SmartChef AI 🍽️
         </h1>
-        <button
-          onClick={() => setDarkMode(!darkMode)}
-          className="absolute right-0 p-2 rounded-full bg-green-200 dark:bg-gray-700 hover:scale-105 transition"
-        >
-          {darkMode ? <FaSun className="text-yellow-400" /> : <FaMoon className="text-gray-800" />}
-        </button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl mx-auto mb-10">
@@ -200,7 +241,7 @@ const Home = () => {
         {activeSection === 'profile' && <Profile />}
         {activeSection === 'voice' && (
           <div className="flex flex-col items-center gap-4">
-            <p className="text-green-600 dark:text-green-300 text-lg">
+            <p className="text-green-600 text-lg">
               Speak the ingredients you have, and get recipe suggestions!
             </p>
             <button
@@ -233,7 +274,7 @@ const Home = () => {
                 placeholder="e.g. tomato,onion,cheese"
                 value={ingredients}
                 onChange={(e) => setIngredients(e.target.value)}
-                className="border border-gray-300 px-3 py-2 rounded w-full"
+                className="border border-gray-300 px-3 py-2 rounded w-full text-black"
               />
               <button
                 onClick={handleSearch}
@@ -248,7 +289,7 @@ const Home = () => {
                 <div
                   key={r.id}
                   onClick={() => setSelectedRecipe(r)}
-                  className="cursor-pointer bg-white dark:bg-gray-700 p-4 rounded shadow hover:shadow-md transition"
+                  className="cursor-pointer bg-white p-4 rounded shadow hover:shadow-md transition"
                 >
                   <img src={r.image} alt={r.title} className="rounded mb-2 w-full h-48 object-cover" />
                   <h3 className="text-lg font-semibold">{r.title}</h3>
@@ -263,6 +304,8 @@ const Home = () => {
           <RecipeDetail recipe={selectedRecipe} onBack={() => setSelectedRecipe(null)} />
         )}
       </div>
+      <Footer />
+      <div id="about-us-section"></div>
     </div>
   );
 };

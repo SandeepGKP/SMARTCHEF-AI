@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaUser, FaEnvelope, FaUtensils, FaHeart, FaCog, FaChartBar, FaTrophy, FaEdit, FaCamera, FaSave, FaTrash, FaStar, FaClock, FaBookmark, FaShare, FaDownload, FaSignOutAlt } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaUtensils, FaHeart, FaCog, FaChartBar, FaTrophy, FaEdit, FaCamera, FaSave, FaTrash, FaStar, FaClock, FaBookmark, FaShare, FaDownload, FaSignOutAlt, FaTimes } from 'react-icons/fa';
 
 const Profile = () => {
   const [user, setUser] = useState({});
@@ -17,6 +17,7 @@ const Profile = () => {
     measurementUnits: 'Metric',
     servingSize: '2-4 people'
   });
+  const [profilePhoto, setProfilePhoto] = useState(localStorage.getItem('profilePhoto') || null);
 
   // Mock data for demonstration
   const [stats] = useState({
@@ -74,7 +75,7 @@ const Profile = () => {
           console.error('❌ Error status:', err.response?.status);
           console.error('❌ Error data:', err.response?.data);
           console.error('❌ Error message:', err.message);
-          
+
           // If token is invalid, remove it and show login message
           if (err.response?.status === 401) {
             localStorage.removeItem('token');
@@ -98,6 +99,24 @@ const Profile = () => {
     setIsEditing(false);
     // Here you would typically save to backend
     console.log('Profile data saved:', profileData);
+  };
+
+  const handlePhotoUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const photoData = e.target.result;
+        setProfilePhoto(photoData);
+        localStorage.setItem('profilePhoto', photoData);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemovePhoto = () => {
+    setProfilePhoto(null);
+    localStorage.removeItem('profilePhoto');
   };
 
   const handleLogout = () => {
@@ -170,12 +189,35 @@ const Profile = () => {
               {/* Profile Card */}
               <div className="text-center mb-6">
                 <div className="relative inline-block">
-                  <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-4">
-                    {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-                  </div>
-                  <button className="absolute bottom-0 right-0 bg-white dark:bg-gray-700 p-2 rounded-full shadow-lg hover:scale-110 transition-transform">
+                  {profilePhoto ? (
+                    <div className="w-24 h-24 rounded-full overflow-hidden mb-4 relative">
+                      <img
+                        src={profilePhoto}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                      <button
+                        onClick={handleRemovePhoto}
+                        className="absolute top-0 right-3 translate-x-1/3 translate-y-1/3 bg-red-500 text-white w-6 h-6 rounded-full text-base font-bold hover:bg-red-600 transition-colors flex items-center justify-center shadow-lg border-4 border-white dark:border-gray-800 z-20"
+                        title="Remove photo"
+                      >
+                        <FaTimes />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-4">
+                      {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                    </div>
+                  )}
+                  <label className="absolute bottom-0 right-0 bg-white dark:bg-gray-700 p-2 rounded-full shadow-lg hover:scale-110 transition-transform cursor-pointer">
                     <FaCamera className="text-gray-600 dark:text-gray-300" />
-                  </button>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoUpload}
+                      className="hidden"
+                    />
+                  </label>
                 </div>
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                   {user.name || 'Loading...'}
@@ -195,11 +237,10 @@ const Profile = () => {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${
-                      activeTab === tab.id
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${activeTab === tab.id
                         ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300'
                         : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                    }`}
+                      }`}
                   >
                     {tab.icon}
                     {tab.name}
@@ -266,7 +307,7 @@ const Profile = () => {
                       {isEditing ? 'Cancel' : 'Edit'}
                     </button>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -276,8 +317,8 @@ const Profile = () => {
                         <input
                           type="text"
                           value={profileData.dietaryPreferences.join(', ')}
-                          onChange={(e) => setProfileData({...profileData, dietaryPreferences: e.target.value.split(', ')})}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                          onChange={(e) => setProfileData({ ...profileData, dietaryPreferences: e.target.value.split(', ') })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-black"
                         />
                       ) : (
                         <div className="flex flex-wrap gap-2">
@@ -297,8 +338,8 @@ const Profile = () => {
                       {isEditing ? (
                         <select
                           value={profileData.cookingSkill}
-                          onChange={(e) => setProfileData({...profileData, cookingSkill: e.target.value})}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                          onChange={(e) => setProfileData({ ...profileData, cookingSkill: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-black"
                         >
                           <option value="Beginner">Beginner</option>
                           <option value="Intermediate">Intermediate</option>
@@ -320,8 +361,8 @@ const Profile = () => {
                         <input
                           type="text"
                           value={profileData.allergies.join(', ')}
-                          onChange={(e) => setProfileData({...profileData, allergies: e.target.value.split(', ')})}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                          onChange={(e) => setProfileData({ ...profileData, allergies: e.target.value.split(', ') })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-black"
                         />
                       ) : (
                         <div className="flex flex-wrap gap-2">
@@ -341,8 +382,8 @@ const Profile = () => {
                       {isEditing ? (
                         <select
                           value={profileData.measurementUnits}
-                          onChange={(e) => setProfileData({...profileData, measurementUnits: e.target.value})}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                          onChange={(e) => setProfileData({ ...profileData, measurementUnits: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-black"
                         >
                           <option value="Metric">Metric</option>
                           <option value="Imperial">Imperial</option>
@@ -406,7 +447,7 @@ const Profile = () => {
                     </div>
                   </div>
 
-                  {userRecipes.length === 0 ? (
+      {userRecipes.length === 0 ? (
                     <div className="text-center py-12">
                       <FaUtensils className="text-6xl text-gray-300 dark:text-gray-600 mx-auto mb-4" />
                       <p className="text-gray-500 dark:text-gray-400">No recipes found for your account.</p>
@@ -466,27 +507,24 @@ const Profile = () => {
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Achievements</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {achievements.map((achievement, idx) => (
-                    <div key={idx} className={`p-6 rounded-lg border-2 ${
-                      achievement.earned 
-                        ? 'border-green-200 dark:border-green-700 bg-green-50 dark:bg-green-900/20' 
+                    <div key={idx} className={`p-6 rounded-lg border-2 ${achievement.earned
+                        ? 'border-green-200 dark:border-green-700 bg-green-50 dark:bg-green-900/20'
                         : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700'
-                    }`}>
+                      }`}>
                       <div className="text-center">
                         <div className={`text-4xl mb-3 ${achievement.earned ? 'opacity-100' : 'opacity-30'}`}>
                           {achievement.icon}
                         </div>
-                        <h4 className={`font-semibold mb-2 ${
-                          achievement.earned 
-                            ? 'text-gray-900 dark:text-white' 
+                        <h4 className={`font-semibold mb-2 ${achievement.earned
+                            ? 'text-gray-900 dark:text-white'
                             : 'text-gray-500 dark:text-gray-400'
-                        }`}>
+                          }`}>
                           {achievement.name}
                         </h4>
-                        <p className={`text-sm ${
-                          achievement.earned 
-                            ? 'text-gray-600 dark:text-gray-300' 
+                        <p className={`text-sm ${achievement.earned
+                            ? 'text-gray-600 dark:text-gray-300'
                             : 'text-gray-400 dark:text-gray-500'
-                        }`}>
+                          }`}>
                           {achievement.description}
                         </p>
                         {achievement.earned && (
@@ -508,7 +546,7 @@ const Profile = () => {
               <div className="space-y-6">
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Account Settings</h3>
-                  
+
                   <div className="space-y-6">
                     <div>
                       <h4 className="font-medium text-gray-900 dark:text-white mb-4">Notifications</h4>

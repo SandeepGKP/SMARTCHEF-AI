@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FaUserCircle } from 'react-icons/fa';
+import Footer from '../components/Footer';
 
 const Login = () => {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -39,6 +40,7 @@ const Login = () => {
   };
 
   return (
+    <>
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 via-white to-green-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
       <div className="max-w-md w-full mx-auto p-8 rounded-2xl shadow-2xl bg-white dark:bg-gray-800 border border-green-100 dark:border-gray-700 flex flex-col items-center">
         <FaUserCircle className="text-green-500 dark:text-green-300 text-5xl mb-4" />
@@ -70,6 +72,9 @@ const Login = () => {
         </form>
       </div>
     </div>
+    <Footer />
+    <div id="about-us-section"></div>
+    </> 
   );
 };
 

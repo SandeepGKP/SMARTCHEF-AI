@@ -122,7 +122,7 @@ const Profile = () => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('recipes');
-    window.location.reload();
+    window.location.href = '/';
   };
 
   const tabs = [

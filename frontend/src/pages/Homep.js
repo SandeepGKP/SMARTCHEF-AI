@@ -269,20 +269,32 @@ const Home = () => {
         {activeSection === 'recipes' && !selectedRecipe && (
           <>
             <div className="mb-4">
-              <input
-                type="text"
-                placeholder="e.g. tomato,onion,cheese"
-                value={ingredients}
-                onChange={(e) => setIngredients(e.target.value)}
-                className="border border-gray-300 px-3 py-2 rounded w-full text-black"
-              />
-              <button
-                onClick={handleSearch}
-                className="bg-green-600 text-white mt-2 px-4 py-2 rounded hover:bg-green-700"
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault(); // prevent default form submission
+            
+                  handleSearch();
+                }}
               >
-                Search
-              </button>
+                <input
+                  type="text"
+                  placeholder="e.g. tomato,onion,cheese"
+                  value={ingredients}
+                  onChange={(e) => setIngredients(e.target.value)}
+                  className="border border-gray-300 px-3 py-2 rounded w-full text-black"
+                  required
+                />
+      
+                <button
+                  type="submit"
+                  className="bg-green-600 text-white mt-2 px-4 py-2 rounded hover:bg-green-700"
+                >
+                  Search
+                </button>
+              </form>
+
             </div>
+
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {recipes.map((r) => (

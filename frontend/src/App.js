@@ -13,6 +13,7 @@ const App = () => {
   useEffect(() => {
     const handleStorageChange = () => {
       setToken(localStorage.getItem('token'));
+      console.log('🔄 Token updated from localStorage:', localStorage.getItem('token'));
     };
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);

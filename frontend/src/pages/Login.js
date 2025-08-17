@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FaUserCircle } from 'react-icons/fa';
 import Footer from '../components/Footer';
+import {ToastContainer, toast} from 'react-toastify';
+
 
 const Login = () => {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -41,27 +43,36 @@ const Login = () => {
       if (res.data.token) {
         localStorage.setItem('token', res.data.token);
         console.log('✅ Token saved to localStorage');
-        alert('Login successful!');
+        // alert('Login successful!');
         setLoggedIn(true);
+        toast.success('Login successful! Redirecting to home...');
       } else {
         setError("⚠️ No token received, login failed");
       }
     } catch (err) {
       console.error('❌ Login error:', err);
       console.error('❌ Error response:', err.response?.data);
-      setError(err.response?.data?.error || 'Login failed. Try again.');
+
+      if (err.response.status === 401 || err.response.status === 404) {
+        // ✅ User not found → go to Register page
+        toast.error('User not found. Please register first.');
+        navigate('/register');
+      } else {
+        setError(err.response?.data?.error || 'Login failed. Try again.');
+      }
     }
   };
 
   useEffect(() => {
     if (loggedIn) {
-      navigate('/home');
+      navigate('/home'); // Redirect to home if logged in
     }
   }, [loggedIn, navigate]);
 
   return (
     <>
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 via-white to-green-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
+        <ToastContainer />
         <div className="max-w-md w-full mx-auto p-8 rounded-2xl shadow-2xl bg-white dark:bg-gray-800 border border-green-100 dark:border-gray-700 flex flex-col items-center">
           <FaUserCircle className="text-green-500 dark:text-green-300 text-5xl mb-4" />
           <h1 className="text-3xl font-bold mb-2 text-green-700 dark:text-green-300">Login to SmartChef</h1>

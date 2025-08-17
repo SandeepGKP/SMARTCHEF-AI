@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 
@@ -22,7 +22,7 @@ const features = [
 ];
 
 const LandingPage = () => {
-  const [theme, setTheme] = useState(localStorage.getItem('theme'));
+  // const [theme, setTheme] = useState(localStorage.getItem('theme'));
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,7 +32,7 @@ const LandingPage = () => {
   useEffect(() => {
     const syncTheme = () => {
       const theme = localStorage.getItem('theme');
-      setTheme(theme);
+      // setTheme(theme);
       if (theme === 'dark') {
         document.documentElement.classList.add('dark');
       } else {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaUser, FaEnvelope, FaUtensils, FaHeart, FaCog, FaChartBar, FaTrophy, FaEdit, FaCamera, FaSave, FaTrash, FaStar, FaClock, FaBookmark, FaShare, FaDownload, FaSignOutAlt, FaTimes } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaUtensils, FaHeart, FaCog, FaChartBar, FaTrophy, FaEdit, FaCamera, FaSave, FaTrash, FaStar, FaClock, FaBookmark, FaShare, FaDownload, FaTimes } from 'react-icons/fa';
 
 const Profile = () => {
   const [user, setUser] = useState({});

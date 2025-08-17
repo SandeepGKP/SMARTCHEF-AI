@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaUserPlus } from 'react-icons/fa';
 import Footer from '../components/Footer';
+import { ToastContainer, toast } from 'react-toastify';
 
 const Register = () => {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
@@ -32,6 +33,7 @@ const Register = () => {
     try {
       const res = await axios.post('https://smartchef-ai-backend.onrender.com/api/auth/register', form);
       alert('✅ ' + res.data.message + ' Please login.');
+      toast.success('Registration successful!');
       navigate('/login');
     } catch (err) {
       setError(err.response?.data?.error || 'Registration failed. Try again.');
@@ -41,6 +43,7 @@ const Register = () => {
   return (
     <>
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 via-white to-green-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
+        <ToastContainer />
         <div className="max-w-md w-full mx-auto p-8 rounded-2xl shadow-2xl bg-white dark:bg-gray-800 border border-green-100 dark:border-gray-700 flex flex-col items-center">
           <FaUserPlus className="text-green-500 dark:text-green-300 text-5xl mb-4" />
           <h1 className="text-3xl font-bold mb-2 text-green-700 dark:text-green-300">Create an Account</h1>

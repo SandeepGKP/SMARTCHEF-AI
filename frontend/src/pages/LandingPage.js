@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 
 const features = [
@@ -23,6 +23,11 @@ const features = [
 
 const LandingPage = () => {
   const [theme, setTheme] = useState(localStorage.getItem('theme'));
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate('/login');
+  }, [navigate]);
 
   useEffect(() => {
     const syncTheme = () => {

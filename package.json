@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "ai_cooking_assistant": "file:backend"
+  }
+}
